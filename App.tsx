@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
 import Lizard from './Lizard';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface LizardData {
   id: string;
@@ -9,18 +9,23 @@ interface LizardData {
 
 export default function App() {
   const [lizards, setLizards] = useState<LizardData[]>([]);
-  const [appVersion, setAppVersion] = useState('1.0.1');
+  const lizardsRef = useRef(lizards);
+  const [appVersion, setAppVersion] = useState('1.0.2');
+
+  useEffect(() => {
+    lizardsRef.current = lizards;
+  }, [lizards]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (lizards.length < 4) {
+      if (lizardsRef.current.length < 4) {
         const newId = String(Date.now() + Math.random());
         setLizards((prevLizards) => [...prevLizards, { id: newId }]);
       }
     }, 1000); // Generate a new lizard every second
 
     return () => clearInterval(interval);
-  }, [lizards]);
+  }, []);
 
   const handleAnimationEnd = (id: string) => {
     setLizards((prevLizards) => prevLizards.filter((lizard) => lizard.id !== id));
