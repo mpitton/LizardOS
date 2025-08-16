@@ -9,6 +9,7 @@ interface LizardData {
 
 export default function App() {
   const [lizards, setLizards] = useState<LizardData[]>([]);
+  const [appVersion, setAppVersion] = useState('1.0.1');
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -35,6 +36,7 @@ export default function App() {
         {lizards.map((lizard) => (
           <Lizard key={lizard.id} id={lizard.id} onAnimationEnd={handleAnimationEnd} />
         ))}
+        <Text style={styles.versionText}>v{appVersion}</Text>
         <StatusBar style="auto" />
       </View>
     </TouchableWithoutFeedback>
@@ -45,7 +47,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
-    // alignItems: 'center',
-    // justifyContent: 'center',
+  },
+  versionText: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    color: 'green',
+    fontSize: 12,
   },
 });
