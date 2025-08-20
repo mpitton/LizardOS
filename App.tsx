@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
 import Lizard from './Lizard';
 import { useState, useEffect, useRef } from 'react';
+import { Audio } from 'expo-av';
 
 interface LizardData {
   id: string;
@@ -10,7 +11,32 @@ interface LizardData {
 export default function App() {
   const [lizards, setLizards] = useState<LizardData[]>([]);
   const lizardsRef = useRef(lizards);
-  const [appVersion, setAppVersion] = useState('1.0.2');
+  const [appVersion, setAppVersion] = useState('1.0.3');
+
+  // Ref to hold the sound object
+  const soundObject = useRef<Audio.Sound | null>(null);
+
+  // Load sound once when component mounts
+  useEffect(() => {
+    const loadSound = async () => {
+      try {
+        const { sound } = await Audio.Sound.createAsync(
+          require('./assets/slime-impact-352473.mp3')
+        );
+        soundObject.current = sound;
+      } catch (error) {
+        console.error('Error loading sound', error);
+      }
+    };
+    loadSound();
+
+    return () => {
+      // Unload sound when component unmounts
+      if (soundObject.current) {
+        soundObject.current.unloadAsync();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     lizardsRef.current = lizards;
@@ -31,8 +57,18 @@ export default function App() {
     setLizards((prevLizards) => prevLizards.filter((lizard) => lizard.id !== id));
   };
 
-  const handlePress = () => {
+  const handlePress = async () => {
     setLizards([]);
+    // Play sound
+    if (soundObject.current) {
+      try {
+        // Reset playback position to 0 to play from beginning
+        await soundObject.current.setPositionAsync(0);
+        await soundObject.current.playAsync();
+      } catch (error) {
+        console.error('Error playing sound', error);
+      }
+    }
   };
 
   return (
