@@ -26,6 +26,7 @@ export default function App() {
         });
         const { sound } = await Audio.Sound.createAsync(
           { uri: 'https://audio-edge-d34v9.syd.o.radiomast.io/ref-128k-mp3-stereo' }
+          //special thanks to https://www.radiomast.io/reference-streams for their reference audio streams.
         );
         soundObject.current = sound;
       } catch (error) {
