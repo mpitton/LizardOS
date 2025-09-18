@@ -1,3 +1,4 @@
+
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
 import Lizard from './Lizard';
@@ -11,7 +12,7 @@ interface LizardData {
 export default function App() {
   const [lizards, setLizards] = useState<LizardData[]>([]);
   const lizardsRef = useRef(lizards);
-  const [appVersion, setAppVersion] = useState('1.0.3');
+  const [appVersion, setAppVersion] = useState('1.0.4');
 
   // Ref to hold the sound object
   const soundObject = useRef<Audio.Sound | null>(null);
@@ -20,8 +21,11 @@ export default function App() {
   useEffect(() => {
     const loadSound = async () => {
       try {
+        await Audio.setAudioModeAsync({
+          playsInSilentModeIOS: true,
+        });
         const { sound } = await Audio.Sound.createAsync(
-          require('./assets/slime-impact-352473.mp3')
+          { uri: 'https://audio-edge-d34v9.syd.o.radiomast.io/ref-128k-mp3-stereo' }
         );
         soundObject.current = sound;
       } catch (error) {
